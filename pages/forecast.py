@@ -171,11 +171,11 @@ def app():
                 return x_train, x_test, y_train, y_test, x_forecast
             
             st.write('Select models to display their corresponding forecast:')
-            col1,col2 = st.columns(2)
+            col1,col2,col3 = st.columns((1,1,1))
             var = col1.checkbox('Vector Auto Regression (VAR)')
-            varm = col1.checkbox('Vector Auto Regression Moving Average (VARMA)')
+            #varm = col1.checkbox('Vector Auto Regression Moving Average (VARMA)')
             svreg = col2.checkbox('Simple Vector Regression (SVR)')
-            xg = col2.checkbox('Xtreme Gradient Boosting (XGBoost)')
+            xg = col3.checkbox('Xtreme Gradient Boosting (XGBoost)')
             
             if var is True:
                 def predict(coef, history):
@@ -214,43 +214,7 @@ def app():
                 st.subheader("Forecast using Vector Auto Regression")
                 st.write(gp)
                 st.write("MAE : ", mae1)
-            
-            if varm is True:
-                def predictvm(coef, history):
-                    yhat = coef[0]
-                    for i in range(1, len(coef)):
-                    	yhat += coef[i] * history[-i]
-                    return yhat
-                
-                modelvm = VARMAX(train, order = (2,2))
-                model_fit = modelvm.fit()
-                coef1 = model_fit.params
-                c1 = coef1[0:1]
-                c1 = c1.append(coef1[4:12])
-                vhistory = [train['y'][i+1] for i in range(len(train)-1)]
-                vpredictions = list()
-                for t in range(len(test)):
-                	yhat = predictvm(c1, vhistory)
-                	obs = test['y'][t]
-                	vpredictions.append(yhat)
-                	vhistory.append(obs)
-                pfig2 = plt.figure()
-                plt.title("Fit of the Forecast - VARMAX")
-                plt.xlabel("Timestamp")
-                plt.ylabel("y")
-                plt.plot(sc1.inverse_transform(test['y']), label = 'Actual')
-                plt.plot(sc1.inverse_transform(vpredictions), label='Forecast', color='red')
-                plt.legend()
-                st.plotly_chart(pfig2)
-                mae2 = mean_absolute_error(sc1.inverse_transform(test['y']), sc1.inverse_transform(vpredictions))
-                fmodelv = VARMAX(df, order = (2,2))
-                fvarm = fmodelv.fit()
-                am = fvarm.forecast(steps=forecast_out)
-                gp = pd.DataFrame()
-                gp['Forecast'] = sc1.inverse_transform(am['y'].values)
-                st.subheader("Forecast using VARMAX")
-                st.write(gp)
-                st.write("MAE : ", mae2)
+          
                 
             if svreg is True:
                 x_train, x_test, y_train, y_test, x_forecast = dp(df)
