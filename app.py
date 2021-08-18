@@ -19,7 +19,7 @@ from pages import data_upload, forecast, data_viz
  
 app = MultiPage()
 
-#col1, col2 = st.beta_columns((2,1))
+#col1, col2 = st.columns((2,1))
 display = Image.open('Logo_f.PNG')
 display = np.array(display)
 #col1, col2 = st.beta_columns(2)
